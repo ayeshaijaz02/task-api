@@ -155,3 +155,8 @@ For errors, it returned {"detail": "..."} instead of {"error": "..."}. I asked f
 I never told it what the error JSON should look like exactly (key name "error"), or that titles should have whitespace trimmed. It filled those gaps in with its own defaults.
 **After the rematch, what changed:**
 I added "return errors as {\"error\": \"message\"}" to my prompt, and on the second try it matched my format correctly.
+## Week 3 — SQLite Database
+
+![DB Browser screenshot](db-screenshot.png)
+
+Query I ran: `SELECT * FROM tasks WHERE done = 1;`
