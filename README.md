@@ -89,7 +89,14 @@ curl -i -X DELETE http://localhost:8000/tasks/1 # -> 404 (already gone)
 ### Sample curl -i output
 
 ```
-PASTE-YOUR-REAL-OUTPUT-HERE
+C:\Users\Ayesha Awan\OneDrive\Documents\task-api>curl -i http://localhost:8000/tasks
+HTTP/1.1 200 OK
+date: Wed, 19 Aug 2026 18:01:26 GMT
+server: uvicorn
+content-length: 131
+content-type: application/json
+
+[{"id":1,"title":"Buy milk","done":false},{"id":2,"title":"Walk the dog","done":false},{"id":3,"title":"Write README","done":true}]
 ```
 
 ## Swagger screenshot
@@ -97,7 +104,8 @@ PASTE-YOUR-REAL-OUTPUT-HERE
 <!-- ⬇️ Take a screenshot of /docs with the CRUD cycle working, save it as
      swagger-screenshot.png in this folder, and reference it below. -->
 
-![Swagger UI](swagger-screenshot.png)
+![Swagger UI part 1](swagger-screenshot-1.png)
+![Swagger UI part 2](swagger-screenshot-2.png)
 
 ## The mortality experiment
 
@@ -107,7 +115,7 @@ PASTE-YOUR-REAL-OUTPUT-HERE
   about what happened and why.
 -->
 
-_Your two sentences here._
+I created a test task, restarted the server, and checked /tasks again — the test task was gone, only the original 3 seed tasks remained. This happens because tasks are stored only in a Python list in memory, which resets every time the program restarts; nothing is saved to disk.
 
 ## AI vs me
 
@@ -122,13 +130,28 @@ _Your two sentences here._
 **My prompt:**
 
 ```
-PASTE-YOUR-OWN-PROMPT-HERE
+Build a small backend API in Python using FastAPI that manages a to-do list.
+Each task should have: id (number), title (text), done (true/false).
+
+I need these endpoints:
+- GET / — shows basic info about the API
+- GET /health — returns {"status": "ok"}
+- GET /tasks — list all tasks
+- GET /tasks/{id} — get one task, return 404 if not found
+- POST /tasks — create a task, title is required, return 400 if title is missing or empty, return 201 on success
+- PUT /tasks/{id} — update a task's title and/or done status, return 404 if not found, 400 if body is invalid
+- DELETE /tasks/{id} — delete a task, return 204 on success, 404 if not found
+
+Use in-memory storage only (a Python list), no database.
+Include Swagger UI docs automatically (FastAPI gives this for free at /docs).
+Pre-fill the list with 3 example tasks when the server starts.
 ```
 
 **What the AI did better:**
-
+Nothing major — it built all the same endpoints, used the same status codes for success, and Swagger docs worked automatically just like mine.
 **What it got wrong or ignored:**
-
+For errors, it returned {"detail": "..."} instead of {"error": "..."}. I asked for a 400/404 error but didn't specify the exact JSON key name, so it used FastAPI's default "detail" key instead of "error". It also didn't strip extra whitespace from titles the way my version does.
 **What my prompt forgot to specify:**
-
+I never told it what the error JSON should look like exactly (key name "error"), or that titles should have whitespace trimmed. It filled those gaps in with its own defaults.
 **After the rematch, what changed:**
+I added "return errors as {\"error\": \"message\"}" to my prompt, and on the second try it matched my format correctly.
