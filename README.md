@@ -160,3 +160,11 @@ I added "return errors as {\"error\": \"message\"}" to my prompt, and on the sec
 ![DB Browser screenshot](db-screenshot.png)
 
 Query I ran: `SELECT * FROM tasks WHERE done = 1;`
+
+## Week — Postgres in Docker
+
+`docker compose up` starts everything — the app and a real Postgres database, both running in containers. The connection string comes from `.env` (never committed — only `.env.example` is).
+
+![Postgres screenshot](postgres-screenshot.png)
+
+Proof of persistence: created a task, ran `docker compose down` then `docker compose up` again — the task was still there. The volume kept the data even though both containers fully restarted.
