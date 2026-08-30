@@ -168,3 +168,29 @@ Query I ran: `SELECT * FROM tasks WHERE done = 1;`
 ![Postgres screenshot](postgres-screenshot.png)
 
 Proof of persistence: created a task, ran `docker compose down` then `docker compose up` again — the task was still there. The volume kept the data even though both containers fully restarted.
+## Auth (Week 4 — Supabase + FastAPI)
+
+This adds a secure login system using Supabase as the Identity Provider. Users sign up and log in through Supabase, which returns a JWT (access token). That token must be sent in the `Authorization: Bearer <token>` header to reach protected routes. A reusable FastAPI dependency (`auth_guard.py`) verifies the token with Supabase before allowing access.
+
+### Setup
+1. Create a free Supabase project at supabase.com
+2. Copy your Project URL and anon/publishable key from Project Settings → API
+3. Add them to your `.env` file:
+4. Install the new dependencies: `pip install supabase python-dotenv "pydantic[email]"`
+5. Run the server as usual: `uvicorn main:app --reload`
+
+### Endpoints
+
+| Route | Method | Needs token? | Purpose |
+|---|---|---|---|
+| /auth/signup | POST | No | Create a new account |
+| /auth/login | POST | No | Log in, returns access + refresh token |
+| /auth/logout | POST | Yes | End the session |
+| /public/info | GET | No | Public example route |
+| /protected/profile | GET | Yes | Returns the logged-in user's own info |
+| /protected/dashboard | GET | Yes | Second protected route, same guard reused |
+
+### Swagger UI
+Visit `/docs`, click **Authorize**, paste your access token (no "Bearer" prefix needed), and use "Try it out" on any protected route.
+
+![Swagger Auth Screenshot](swagger-auth-screenshot.png)
